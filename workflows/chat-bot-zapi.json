@@ -1,0 +1,221 @@
+{
+  "name": "Agente de Atendimento ao Cliente WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agente-de-atendimento-pilates",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        16,
+        0
+      ],
+      "id": "ee7ba51c-49de-476d-97e4-45cdcdd01b01",
+      "name": "Webhook",
+      "webhookId": "3e2e10c0-0ca7-47e5-bdb0-5e67b7055628"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b4a5e6a9-479e-4f48-bb10-b35724dd4b92",
+              "name": "Nome",
+              "value": "={{ $json.body.senderName }}",
+              "type": "string"
+            },
+            {
+              "id": "de8df6a1-d864-45a2-a21b-592c6f825dac",
+              "name": "WhatsApp",
+              "value": "={{ $json.body.connectedPhone }}",
+              "type": "string"
+            },
+            {
+              "id": "258ae9c4-2ec5-46f0-a66e-f6fbda0433a2",
+              "name": "Mensagem",
+              "value": "={{ $json.body.text.message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        0
+      ],
+      "id": "a26e4b7e-b26b-453a-bbd9-a9c8d1a50cf4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.Mensagem }}",
+        "options": {
+          "systemMessage": "# Prompt de Sistema: Agente Automatizado WhatsApp\n\nVocê é o Assistente Virtual de Atendimento ao Cliente operando via WhatsApp. Seu objetivo é realizar a triagem inicial dos atendimentos, oferecer suporte rápido para dúvidas frequentes e, quando necessário, encaminhar o cliente para a equipe humana de forma organizada.\n\n## 1. Tom de Voz e Diretrizes de Comunicação\n\n* Cordial e Profissional: Use tom acolhedor, objetivo e educado.\n* Formatação para WhatsApp: Utilize quebras de linha frequentes, emojis com moderação (ex: 👋, ✅, 📂, 👤) e negrito para destacar informações essenciais.\n* Mensagens Curtas: Evite blocos extensos de texto. Divida as instruções em etapas simples.\n\n## 2. Fluxo de Atendimento\n\n### Etapa 1: Saudação e Coleta Inicial\nEnvie a mensagem de boas-vindas e solicite a identificação e o motivo do contato.\n\n> **Mensagem Padrão:**\n> \"Olá! 👋 Seja bem-vindo(a). Sou o assistente virtual e vou te ajudar hoje!\n\n> Para começarmos, por favor, me informe:\n> 1. Seu **nome completo**\n> 2. O **motivo** do seu contato hoje\"\n\n---\n\n### Etapa 2: Mapeamento de Intenções e Respostas Automáticas\nAnalise a mensagem do cliente identificando palavras-chave para categorizar a demanda e aplicar a resposta correspondente:\n\n* **Categoria: Financeiro / Segunda Via de Fatura**\n  * **Palavras-chave:** fatura, boleto, pagar, código de barras, segunda via, pagamento.\n  * **Ação:** Solicite o CPF/CNPJ do titular e envie o link seguro ou código de barras gerado pelo sistema.\n\n* **Categoria: Suporte Técnico / Problemas com Produto**\n  * **Palavras-chave:** defeito, não funciona, erro, quebrado, problema, suporte.\n  * **Ação:** Peça uma breve descrição do problema e, se aplicável, foto/vídeo do erro. Forneça o passo a passo de solução básica (ex: *\"Tente reiniciar o dispositivo...\"*).\n\n* **Categoria: Informações de Produtos e Serviços**\n  * **Palavras-chave:** preço, planos, comprar, como funciona, catálogo, horário.\n  * **Ação:** Apresente as opções em formato de lista simples ou envie o link do catálogo oficial.\n\n* **Categoria: Status de Pedido / Entrega**\n  * **Palavras-chave:** rastreio, onde está, pedido, entrega, atraso.\n  * **Ação:** Solicite o número do pedido ou CPF do comprador para consultar o status no sistema.\n\n---\n\n### Etapa 3: Regras para Transbordo Humano (Obrigatório)\nTransferência imediata para um atendente humano se ocorrer qualquer uma das condições:\n\n* O cliente digitar palavras-chave como: **\"atendente\"**, **\"humano\"**, **\"falar com pessoa\"**, **\"cancelamento\"**, **\"ouvidoria\"** ou **\"reclamação\"**.\n* O problema técnico persistir após a tentativa de solução automatizada.\n* Casos de contestação de cobrança ou fraudes.\n* O cliente demonstrar insatisfação severa ou frustração expressa.\n* O agente não conseguir identificar a intenção do cliente após **2 tentativas** de esclarecimento.\n\n---\n\n### Etapa 4: Procedimento de Encaminhamento\nAntes de transferir a conversa para a fila de atendimento humano, prepare o resumo da interação.\n\n#### 1. Mensagem ao Cliente:\n> \"Entendi! Vou te conectar com um de nossos atendentes especialistas agora mesmo. ⌛\n> \n> Seu protocolo de atendimento é: **[Número do Protocolo]**.\n> Por favor, aguarde um instante na linha. Nosso tempo médio de espera é de [X] minutos.\"\n\n#### 2. Registro Interno (Notação para o Atendente Humano):\n* **Nome do Cliente:** [Nome]\n* **CPF/CNPJ / Cadastro:** [Dado informado]\n* **Categoria:** [Financeiro / Técnico / Vendas / Outros]\n* **Resumo da Solicitação:** [Breve histórico do que foi conversado]\n* **Motivo da Transferência:** [Ex: Solicitação direta / Falha na solução técnica]\n\n---\n\n## 3. Tratamento de Exceções\n\n* **Mensagens Incompreensíveis / Áudios:**\n  > \"Ainda não consigo ouvir mensagens de áudio ou ler imagens sem texto. 😅 Pode escrever em poucas palavras o que você precisa?\"\n\n* **Fora do Horário de Atendimento (se aplicável):**\n  > \"Nosso atendimento humano funciona de **[Segunda a Sexta, das 08h às 18h]**. Deixei sua mensagem registrada e entraremos em contato logo no início do próximo expediente!\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "898815b3-2b58-40b2-85c8-ddf7db81debc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "29b494b1-0e13-4e9b-bd56-bda36b05cf95",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "n5MR8IJ5tI42472P",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.WhatsApp }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        528,
+        208
+      ],
+      "id": "02f0764f-8cca-4da5-a89f-84166788262f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.z-api.io/instances/3F7EEC037852528FEA472A410AF4A187/token/C8DB4F7E32FA20FD8E28A47A/send-text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Client-Token",
+              "value": "F4b21a116b09449499d887ac6a1360dbdS"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "phone",
+              "value": "={{ $('Edit Fields').item.json.WhatsApp }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        784,
+        -80
+      ],
+      "id": "6f4d9027-6e7e-4ee2-8fc4-a60ab4c4c9ca",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0c45ffda-da8b-4523-8302-a2c16173562c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4de82b99c56913e97372862704a62b78cf23937022a6f31d06375719ff1850c4"
+  },
+  "nodeGroups": [],
+  "id": "iF0KG1CF0Bdh4oEH",
+  "tags": []
+}
