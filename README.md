@@ -2,7 +2,7 @@
 
 Este fluxo recebe requisições via Webhook, processa os dados de entrada, consulta um Agente de IA com memória e envia a resposta de volta utilizando a Z-API (WhatsApp).
 
-![Diagrama do Fluxo](./imagem-do-fluxo.png)
+![Diagrama do Fluxo](./workflow-n8n-agente-atendimento-whatsapp.png)
 
 ## 📌 Visão Geral do Fluxo
 
